@@ -26,7 +26,9 @@ public struct CameraView: UIViewControllerRepresentable {
     private var tapToFocus: Bool
     private var doubleTapCameraSwitch: Bool
     
-    public init(events: UserEvents, applicationName: String, preferredStartingCameraType: AVCaptureDevice.DeviceType = .builtInWideAngleCamera, preferredStartingCameraPosition: AVCaptureDevice.Position = .back, focusImage: String? = nil, pinchToZoom: Bool = true, tapToFocus: Bool = true, doubleTapCameraSwitch: Bool = true) {
+    private var enableAudio: Bool
+    
+    public init(events: UserEvents, applicationName: String, preferredStartingCameraType: AVCaptureDevice.DeviceType = .builtInWideAngleCamera, preferredStartingCameraPosition: AVCaptureDevice.Position = .back, focusImage: String? = nil, pinchToZoom: Bool = true, tapToFocus: Bool = true, doubleTapCameraSwitch: Bool = true, enableAudio: Bool = true) {
         self.events = events
         
         self.applicationName = applicationName
@@ -38,6 +40,8 @@ public struct CameraView: UIViewControllerRepresentable {
         self.pinchToZoom = pinchToZoom
         self.tapToFocus = tapToFocus
         self.doubleTapCameraSwitch = doubleTapCameraSwitch
+        
+        self.enableAudio = enableAudio
     }
     
     public func makeUIViewController(context: Context) -> CameraViewController {
@@ -53,6 +57,8 @@ public struct CameraView: UIViewControllerRepresentable {
         cameraViewController.pinchToZoom = pinchToZoom
         cameraViewController.tapToFocus = tapToFocus
         cameraViewController.doubleTapCameraSwitch = doubleTapCameraSwitch
+        
+        cameraViewController.audioEnabled = enableAudio
         
         return cameraViewController
     }
