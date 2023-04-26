@@ -88,6 +88,9 @@ public class CameraViewController: UIViewController {
     /// Specifies the [videoGravity](https://developer.apple.com/reference/avfoundation/avcapturevideopreviewlayer/1386708-videogravity) for the preview layer.
     public var videoGravity: AVLayerVideoGravity = .resizeAspect
     
+    /// Sets whether portrait photos will be mirror flipped
+    public var mirrorPortraitPhotos = true
+
     /// Sets whether or not video recordings will record audio
     /// Setting to true will prompt user for access to microphone on View Controller launch.
     public var audioEnabled = true
@@ -580,6 +583,16 @@ public class CameraViewController: UIViewController {
         }
     }
     
+    public func getImageOrientation() -> UIImage.Orientation {
+        let photoOrientation : UIImage.Orientation
+        if(self.mirrorPortraitPhotos && (self.videoDeviceInput.device.position == .front)){
+            photoOrientation = UIImage.Orientation.leftMirrored
+        } else {
+            photoOrientation =  UIImage.Orientation.right
+        }
+        return photoOrientation
+    }
+
 }
 
 extension CameraViewController: AVCapturePhotoCaptureDelegate {
@@ -609,13 +622,10 @@ extension CameraViewController: AVCapturePhotoCaptureDelegate {
                                      shouldInterpolate: true,
                                      intent: CGColorRenderingIntent.defaultIntent)
             
-            // TODO: implement imageOrientation
             // Set proper orientation for photo
             // If camera is currently set to front camera, flip image
-            //          let imageOrientation = getImageOrientation()
-            
-            // For now, it is only right
-            let image = UIImage(cgImage: cgImageRef!, scale: 1, orientation: .right)
+            let imageOrientation = getImageOrientation()
+            let image = UIImage(cgImage: cgImageRef!, scale: 1, orientation: imageOrientation)
             
             //2 options to save
             //First is to use UIImageWriteToSavedPhotosAlbum
