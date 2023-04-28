@@ -1,0 +1,54 @@
+//
+//  PhotoCaptureButtonView.swift
+//  SwiftUICam
+//
+//  Created by Benjamin Lucas on 4/27/23.
+//
+
+import SwiftUI
+import UIKit
+
+struct CaptureButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .foregroundColor(.white)
+            .scaleEffect(configuration.isPressed ? 0.8 : 1)
+            .animation(.easeOut (duration: 0.15), value: configuration.isPressed)
+    }
+}
+
+struct PhotoCaptureButtonView: View {
+    let action : () -> Void
+    
+    func hapticFeedback() {
+        let generator = UIImpactFeedbackGenerator(style: .medium)
+        generator.impactOccurred()
+    }
+    
+    var body: some View {
+        ZStack(alignment: .center) {
+            Image(systemName: "circle")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 64.0, height: 64.0)
+                .foregroundColor(.white)
+            Button(action: {
+                hapticFeedback()
+                action()
+            }){
+                Image(systemName: "circle.fill")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 48.0, height: 48.0)
+                    .foregroundColor(.white)
+            }
+            .buttonStyle(CaptureButtonStyle())
+        }
+    }
+}
+
+struct PhotoCaptureButtonView: PreviewProvider {
+    static var previews: some View {
+        CameraCaptureButtonView(action: {})
+    }
+}
