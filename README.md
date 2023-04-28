@@ -9,6 +9,9 @@ If you want to have a custom camera using SwiftUI and not using the UIPickerCont
 
 SwiftUICam gives you a realtime full screen Snapchat-style view of the iPhone camera. Then, it is your job to built the interface you want and to connect it to the Camera View.
 
+## This Fork
+This repository is a fork from Pierre Véron's original [SwiftUICam](https://github.com/pierreveron/SwiftUICam). That repository has now been archived. There were a number of features and additions that I needed for my own projects and I wanted to make them available.
+
 ## Features
 
 |                              | SwiftUICam        
