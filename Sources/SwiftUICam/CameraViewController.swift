@@ -13,6 +13,9 @@
  The app's primary view controller that presents the camera interface.
  */
 
+
+#warning("THIS IS STILL A VERY BAD IMPLEMENTATION, I JUST WANT IT TO WORK FOR SILVAN. DEFINITELY CHANGE TO A CAMERAACTIONS IMPLEMENTATION WHEN POSSIBLE")
+
 import UIKit
 import AVFoundation
 import Photos
@@ -57,7 +60,9 @@ public class CameraViewController: UIViewController {
     public var maximumVideoDuration: Double = 10.0
     
     /// Video capture quality
-    public var videoQuality: AVCaptureSession.Preset = .high
+    public var videoQuality: AVCaptureSession.Preset?
+    
+    public var cameraZoom: Float = 1
     
     /// Flash Mode
     public var flashMode: AVCaptureDevice.FlashMode = .off
@@ -308,7 +313,12 @@ public class CameraViewController: UIViewController {
         session.beginConfiguration()
         
         //Preset of the Snapchat Camera is .high
-        session.sessionPreset = .high
+        if let quality = videoQuality{
+            session.sessionPreset = quality
+        }
+        else{
+            session.sessionPreset = .photo
+        }
         //.photo is the preset for normal photo in the iOS camera app
         //      session.sessionPreset = .photo
         
@@ -319,6 +329,10 @@ public class CameraViewController: UIViewController {
             // Choose the back dual camera, if available, otherwise default to a wide angle camera.
             if let preferredCameraDevice = AVCaptureDevice.default(preferredStartingCameraType!, for: .video, position: preferredStartingCameraPosition!) {
                 defaultVideoDevice = preferredCameraDevice
+            }else if let tripleCameraDevice = AVCaptureDevice.default(.builtInTripleCamera, for: .video, position: .back) {
+                defaultVideoDevice = tripleCameraDevice
+            }else if let dualWideCamerDevice = AVCaptureDevice.default(.builtInDualWideCamera, for: .video, position: .back) {
+                        defaultVideoDevice = dualWideCamerDevice
             } else if let dualCameraDevice = AVCaptureDevice.default(.builtInDualCamera, for: .video, position: .back) {
                 defaultVideoDevice = dualCameraDevice
             } else if let backCameraDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) {
@@ -334,6 +348,7 @@ public class CameraViewController: UIViewController {
                 session.commitConfiguration()
                 return
             }
+            
             let videoDeviceInput = try AVCaptureDeviceInput(device: videoDevice)
             
             if session.canAddInput(videoDeviceInput) {
@@ -546,6 +561,28 @@ public class CameraViewController: UIViewController {
         
         DispatchQueue.main.async {
             self.delegate?.didChangeFlashMode()
+        }
+    }
+    
+    public func setZoom(zoom: Float){
+        do {
+            let captureDevice = videoDeviceInput?.device
+            try captureDevice?.lockForConfiguration()
+            
+            if CGFloat(zoom) < captureDevice!.activeFormat.videoMaxZoomFactor{
+                zoomScale = CGFloat(zoom)
+                captureDevice?.videoZoomFactor = CGFloat(zoom)
+            }
+            
+            // Call Delegate function with current zoom scale
+            DispatchQueue.main.async {
+                self.delegate?.didChangeZoomLevel(self.zoomScale)
+            }
+            
+            captureDevice?.unlockForConfiguration()
+            
+        } catch {
+            print("Error locking configuration")
         }
     }
     

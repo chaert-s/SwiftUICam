@@ -27,4 +27,5 @@ public protocol CameraViewControllerDelegate {
     func didFinishSavingWithError(_ image: UIImage, error: NSError?, contextInfo: UnsafeRawPointer)
     
     func didChangeMaximumVideoDuration(_ duration: Double)
+    
 }

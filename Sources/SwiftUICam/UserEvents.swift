@@ -15,6 +15,9 @@ public class UserEvents: ObservableObject {
     @Published public var didAskToRecordVideo = false
     @Published public var didAskToStopRecording = false
     
+    @Published public var didAskToChangeZoom = false
+    @Published public var zoomLevel: Float = 1.0
+    
     public init() {
         
     }

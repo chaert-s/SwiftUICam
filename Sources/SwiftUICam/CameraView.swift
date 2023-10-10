@@ -20,6 +20,10 @@ public struct CameraView: UIViewControllerRepresentable {
     private var preferredStartingCameraType: AVCaptureDevice.DeviceType
     private var preferredStartingCameraPosition: AVCaptureDevice.Position
     
+    //MY BAD APPLES
+    private var preferredPictureQuality: AVCaptureSession.Preset
+    private var cameraZoom: Float
+    
     private var focusImage: String?
     
     private var pinchToZoom: Bool
@@ -28,7 +32,7 @@ public struct CameraView: UIViewControllerRepresentable {
     
     private var enableAudio: Bool
     
-    public init(events: UserEvents, applicationName: String, preferredStartingCameraType: AVCaptureDevice.DeviceType = .builtInWideAngleCamera, preferredStartingCameraPosition: AVCaptureDevice.Position = .back, focusImage: String? = nil, pinchToZoom: Bool = true, tapToFocus: Bool = true, doubleTapCameraSwitch: Bool = true, enableAudio: Bool = true) {
+    public init(events: UserEvents, applicationName: String, preferredStartingCameraType: AVCaptureDevice.DeviceType = .builtInWideAngleCamera, preferredStartingCameraPosition: AVCaptureDevice.Position = .back, preferredPictureQuality: AVCaptureSession.Preset, initialCameraZoom: Float, focusImage: String? = nil, pinchToZoom: Bool = true, tapToFocus: Bool = true, doubleTapCameraSwitch: Bool = true, enableAudio: Bool = true) {
         self.events = events
         
         self.applicationName = applicationName
@@ -36,6 +40,9 @@ public struct CameraView: UIViewControllerRepresentable {
         self.focusImage = focusImage
         self.preferredStartingCameraType = preferredStartingCameraType
         self.preferredStartingCameraPosition = preferredStartingCameraPosition
+        
+        self.preferredPictureQuality = preferredPictureQuality
+        self.cameraZoom = initialCameraZoom
         
         self.pinchToZoom = pinchToZoom
         self.tapToFocus = tapToFocus
@@ -51,6 +58,9 @@ public struct CameraView: UIViewControllerRepresentable {
         cameraViewController.applicationName = applicationName
         cameraViewController.preferredStartingCameraType = preferredStartingCameraType
         cameraViewController.preferredStartingCameraPosition = preferredStartingCameraPosition
+        
+        cameraViewController.videoQuality = preferredPictureQuality
+        cameraViewController.cameraZoom = cameraZoom
         
         cameraViewController.focusImage = focusImage
         
@@ -78,6 +88,9 @@ public struct CameraView: UIViewControllerRepresentable {
         
         if events.didAskToRecordVideo || events.didAskToStopRecording {
             cameraViewController.toggleMovieRecording()
+        }
+        if events.didAskToChangeZoom{
+            cameraViewController.setZoom(zoom: events.zoomLevel)
         }
     }
     
@@ -124,6 +137,7 @@ public struct CameraView: UIViewControllerRepresentable {
             
         public func didChangeZoomLevel(_ zoom: CGFloat) {
                 print("New zoom value: \(zoom)")
+            parent.events.didAskToChangeZoom = false
             }
             
         public func didFocusOnPoint(_ point: CGPoint) {

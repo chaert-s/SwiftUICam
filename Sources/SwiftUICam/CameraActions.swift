@@ -13,6 +13,7 @@ public protocol CameraActions {
     func toggleVideoRecording(events: UserEvents)
     func rotateCamera(events: UserEvents)
     func changeFlashMode(events: UserEvents)
+    func changeZoom(events: UserEvents, zoomLevel: Float)
 }
 
 public extension CameraActions {
@@ -34,5 +35,9 @@ public extension CameraActions {
     
     func changeFlashMode(events: UserEvents) {
         events.didAskToChangeFlashMode = true
+    }
+    func changeZoom(events:UserEvents, zoomLevel: Float){
+        events.zoomLevel = zoomLevel
+        events.didAskToChangeZoom = true
     }
 }
